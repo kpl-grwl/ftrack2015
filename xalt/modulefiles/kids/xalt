@@ -1,0 +1,17 @@
+#%Module
+
+proc ModulesHelp { } {
+    puts stderr "Sets up users' environment to use XALT."
+  }
+
+conflict totalview
+
+setenv XALT_USERS kagrawa1
+#setenv XALT_ON 1
+
+prepend-path PATH           /nics/d/home/kagrawa1/psmisc/builds/kids/bin
+prepend-path PATH           /nics/d/home/kagrawa1/xalt/build/bin  1000
+prepend-path PATH           /nics/d/home/kagrawa1/xalt/build/libexec  
+prepend-path PYTHONPATH     /nics/d/home/kagrawa1/xalt/build/libexec
+prepend-path PYTHONPATH     /nics/d/home/kagrawa1/xalt/build/site
+

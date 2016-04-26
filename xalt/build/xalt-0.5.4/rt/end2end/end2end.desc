@@ -1,0 +1,40 @@
+# -*- python -*-
+
+test_name = "end2end"
+
+test_descript = {
+   'description' : "End to end test",
+   'keywords'    : [ "simple", test_name,],
+
+   'active'      : True,
+   'test_name'   : test_name,
+
+   'run_script'  : """
+     . $(projectDir)/rt/common_funcs.sh
+
+     initialize
+     installXALT
+
+     export PROMPT_COMMAND2="printf '\033k${formed_hostname}\033\\';"
+
+     runMe installDB             # 1
+
+     module --quiet rm $LMOD_FAMILY_MPI $LMOD_FAMILY_COMPILER
+     module --quiet load gcc mpich
+     PATH=$outputDir/XALT/bin:$outputDir/XALT/sbin:$PATH;
+
+     mpicc -o hello $(projectDir)/rt/mpi_hello_world.c
+     mpirun -n 1 ./hello 
+
+     export XALT_USERS="$USER;$outputDir"
+     xalt_file_to_db.py  --dbname $DBNAME
+
+     check_entries_db.py --dbname $DBNAME --results result.csv
+     removeDataBase.py   --dbname $DBNAME  
+     finishTest -o $(resultFn) -t $(runtimeFn) result.csv
+   """,
+
+   'tests' : [
+      { 'id' : 't1', 'tol' : 1.01e-6},
+   ],
+}

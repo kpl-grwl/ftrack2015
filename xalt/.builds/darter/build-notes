@@ -1,0 +1,45 @@
+I have uploaded XALT 0.3 to github   This is what I had planned to give
+you by Thursday, so I'm ahead of the game.  Please create an account at
+github.com and give it your ssh keys,  Once you send me your account
+name I can add it to the XALT repo on github. This way you will be able
+to push.   Here are the steps to get xalt installed:
+
+1. git clone git@github.com:Fahey-McLay/xalt.git
+2. cd xalt
+3. ./configure --prefix=/opt/apps/xalt/0.3
+4. make install
+5. Create a module for xalt/0.3.lua:  
+     prepend_path{"PATH",/opt/apps/xalt/0.3/bin, priority=100}
+     prepend_path{"PYTHONPATH",/opt/apps/xalt/0.3/libexec}
+     prepend_path{"PATH",/opt/apps/xalt/0.3/libexec}   # to get pstree
+       [Had to modify ld to not use /usr/bin/pstree]
+
+6. Load the xalt modulefile
+
+Obviously you'll choose a different location than /opt/apps/xalt/0.3.
+Now that xalt is installed you'll need to stand up the database and so
+forth: 
+
+1. run sbin/conf_create.py to create your own sbin/xalt_db.conf
+   file to point to your MySQL server.  
+2. Use sbin/createDB.py to create the initial db schema.  
+3. Modify site/xalt_syshost.py to report the syshost name (darter, titan, 
+   ...)  for your systems.  It will have to work on the aprun service nodes.  
+4. Test the linker hijacking.   module load xalt; CC -o hello hello.c 
+5. If this worked there should be a file in the ~/.xalt.d/ called
+   link.darter.....json 
+6. Now you get to create the aprun wrapper.   I think that the mpirun 
+   wrapper should be good guide.  
+7. The file site/SitePkg.py has to be modified by the site to convert 
+   system names to "standard" one.  
+8. Submit a job.  If this worked then there should be a 
+    ~/.xalt.d/run.darter.....json file.  
+9. The script sbin/xalt_json_to_db.py is supposed to read the json 
+   files in ~/.xalt.d and load them into the database.   It currently 
+   doesn't delete the files. but it will soon.
+
+These are the things that I know must be done.  There may be other
+things I've forgotten.   I haven't quite how to handle getting sites to
+modify xalt_syshost.py  and modify site/SitePkg.py to suit.
+
+Robert McLay

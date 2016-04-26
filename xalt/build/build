@@ -1,0 +1,53 @@
+#!/bin/bash
+
+############################## standard interface to /sw tools
+# Input:
+#   Environment variables
+#     SW_BLDDIR    current directory (PWD) minus /autofs/na1_ stuff
+#     SW_ENVFILE   file to be sourced which has alternate prog environment
+#                     only to be used in special circumstances
+#     SW_WORKDIR   unique work dir that local script can use
+# Output
+#   Return code of 0=success or 1=failure 
+##############################
+
+export SW_BLDDIR=`pwd`
+
+. ${SW_BLDDIR}/remodule
+
+############################## app specific section
+#  
+set -o verbose
+# clear out old installation to prevent potential libtool chmod 
+# commands from failing when reinstalled by another person
+rm -rf bin sbin libexec site
+
+cd current
+
+make clean
+
+./configure --prefix=$SW_BLDDIR  --with-etcDir=$SW_BLDDIR/etc
+#\
+#   --with-spiderCacheDir=/sw/tools/lmod/moduleData/darter/cacheDir \
+#   --with-updateSystemFn=/sw/tools/lmod/moduleData/darter/system.txt
+if [ $? -ne 0 ] ; then
+  echo "$PACKAGE configure failed"
+  exit 1
+fi
+
+make 
+  if [ $? -ne 0 ] ; then
+    echo "$PACKAGE make failed"
+    exit 1
+  fi
+
+make install
+if [ $? -ne 0 ] ; then
+  echo "$PACKAGE install failed"
+  exit 1
+fi
+
+cd ../
+
+############################### if this far, return 0
+exit 0

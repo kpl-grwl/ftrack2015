@@ -1,0 +1,9 @@
+  ### Set Environment (do not remove this line only change what is in between)
+#  . ${MODULESHOME}/init/ksh
+  module purge
+  ### End Environment (do not remove this line only change what is in between)
+ 
+machine=darter
+ 
+export PATH=/sw/tools/xalt/psmisc/builds/$machine/bin:${PATH}
+
